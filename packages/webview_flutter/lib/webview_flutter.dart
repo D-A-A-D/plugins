@@ -217,6 +217,7 @@ class WebView extends StatefulWidget {
     this.debuggingEnabled = false,
     this.gestureNavigationEnabled = false,
     this.userAgent,
+    this.allowThirdPartyCookies,
     this.initialMediaPlaybackPolicy =
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
   })  : assert(javascriptMode != null),
@@ -392,6 +393,9 @@ class WebView extends StatefulWidget {
   /// The default policy is [AutoMediaPlaybackPolicy.require_user_action_for_all_media_types].
   final AutoMediaPlaybackPolicy initialMediaPlaybackPolicy;
 
+  /// Enable third party cookies (Android only)
+  final bool allowThirdPartyCookies;
+
   @override
   State<StatefulWidget> createState() => _WebViewState();
 }
@@ -451,12 +455,12 @@ class _WebViewState extends State<WebView> {
 
 CreationParams _creationParamsfromWidget(WebView widget) {
   return CreationParams(
-    initialUrl: widget.initialUrl,
-    webSettings: _webSettingsFromWidget(widget),
-    javascriptChannelNames: _extractChannelNames(widget.javascriptChannels),
-    userAgent: widget.userAgent,
-    autoMediaPlaybackPolicy: widget.initialMediaPlaybackPolicy,
-  );
+      initialUrl: widget.initialUrl,
+      webSettings: _webSettingsFromWidget(widget),
+      javascriptChannelNames: _extractChannelNames(widget.javascriptChannels),
+      userAgent: widget.userAgent,
+      autoMediaPlaybackPolicy: widget.initialMediaPlaybackPolicy,
+      allowThirdPartyCookies: widget.allowThirdPartyCookies);
 }
 
 WebSettings _webSettingsFromWidget(WebView widget) {
@@ -465,6 +469,7 @@ WebSettings _webSettingsFromWidget(WebView widget) {
     hasNavigationDelegate: widget.navigationDelegate != null,
     debuggingEnabled: widget.debuggingEnabled,
     gestureNavigationEnabled: widget.gestureNavigationEnabled,
+    allowThirdPartyCookies: widget.allowThirdPartyCookies,
     userAgent: WebSetting<String>.of(widget.userAgent),
   );
 }
@@ -475,15 +480,18 @@ WebSettings _clearUnchangedWebSettings(
   assert(currentValue.javascriptMode != null);
   assert(currentValue.hasNavigationDelegate != null);
   assert(currentValue.debuggingEnabled != null);
+  assert(currentValue.allowThirdPartyCookies != null);
   assert(currentValue.userAgent.isPresent);
   assert(newValue.javascriptMode != null);
   assert(newValue.hasNavigationDelegate != null);
   assert(newValue.debuggingEnabled != null);
+  assert(newValue.allowThirdPartyCookies != null);
   assert(newValue.userAgent.isPresent);
 
   JavascriptMode javascriptMode;
   bool hasNavigationDelegate;
   bool debuggingEnabled;
+  bool allowThirdPartyCookies;
   WebSetting<String> userAgent = WebSetting<String>.absent();
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
@@ -497,13 +505,16 @@ WebSettings _clearUnchangedWebSettings(
   if (currentValue.userAgent != newValue.userAgent) {
     userAgent = newValue.userAgent;
   }
+  if (currentValue.allowThirdPartyCookies != newValue.allowThirdPartyCookies) {
+    allowThirdPartyCookies = newValue.allowThirdPartyCookies;
+  }
 
   return WebSettings(
-    javascriptMode: javascriptMode,
-    hasNavigationDelegate: hasNavigationDelegate,
-    debuggingEnabled: debuggingEnabled,
-    userAgent: userAgent,
-  );
+      javascriptMode: javascriptMode,
+      hasNavigationDelegate: hasNavigationDelegate,
+      debuggingEnabled: debuggingEnabled,
+      userAgent: userAgent,
+      allowThirdPartyCookies: allowThirdPartyCookies);
 }
 
 Set<String> _extractChannelNames(Set<JavascriptChannel> channels) {

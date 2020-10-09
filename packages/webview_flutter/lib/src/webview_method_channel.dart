@@ -181,6 +181,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
     _addIfNonNull('debuggingEnabled', settings.debuggingEnabled);
     _addIfNonNull(
         'gestureNavigationEnabled', settings.gestureNavigationEnabled);
+    _addIfNonNull('allowThirdPartyCookies', settings.allowThirdPartyCookies);
     _addSettingIfPresent('userAgent', settings.userAgent);
     return map;
   }
@@ -196,6 +197,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
       'settings': _webSettingsToMap(creationParams.webSettings),
       'javascriptChannelNames': creationParams.javascriptChannelNames.toList(),
       'userAgent': creationParams.userAgent,
+      'allowThirdPartyCookies': creationParams.allowThirdPartyCookies,
       'autoMediaPlaybackPolicy': creationParams.autoMediaPlaybackPolicy.index,
     };
   }
